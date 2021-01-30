@@ -1,6 +1,13 @@
 <template>
   <div class="cards">
-    <card v-for="item in emojisToGame" :emoji="item.emoji" :id="item.id" :key="item.key" />
+    <card
+      :current-clicked-cards="currentClickedCards"
+      :solved-cards="solvedCards"
+      v-for="card in emojisToGame"
+      :card="card"
+      :key="card.privateId"
+      @choseCard="choseCard"
+    />
   </div>
 </template>
 
@@ -17,10 +24,33 @@ export default {
     }
   },
   name: 'Cards',
+  data: () => ({
+    currentClickedCards: [],
+    solvedCards: []
+  }),
   components: { Card },
+  watch: {
+    currentClickedCards() {
+      if (this.currentClickedCards.length === 2) {
+        const [card1, card2] = this.currentClickedCards
+        if (card1.publicId === card2.publicId) {
+          this.solvedCards.push(card1.publicId)
+          this.currentClickedCards = []
+        } else {
+          setTimeout(() => {
+            this.currentClickedCards = []
+          }, 500)
+        }
+      }
+    }
+  },
   methods: {
     shuffleInitialEmojis() {
       return shuffleArr(emojis)
+    },
+    choseCard(item) {
+      const { publicId, privateId } = item
+      this.currentClickedCards.push({ publicId, privateId })
     }
   },
   computed: {
@@ -29,18 +59,10 @@ export default {
     },
     emojisToGame() {
       const duplicatedEmojis = this.emojisByDifficult.flatMap(emoji => {
-        const id = getRandomId()
+        const publicId = getRandomId()
         return [
-          {
-            id,
-            emoji,
-            key: getRandomId()
-          },
-          {
-            id,
-            emoji,
-            key: getRandomId()
-          }
+          { publicId, emoji, privateId: getRandomId() },
+          { publicId, emoji, privateId: getRandomId() }
         ]
       })
       return shuffleArr(duplicatedEmojis)
@@ -52,6 +74,6 @@ export default {
 <style scoped lang="sass">
 .cards
   display: grid
-  grid-template-columns: repeat(auto-fill, rem(40))
+  grid-template-columns: repeat(auto-fill, rem(80))
   gap: rem(10)
 </style>

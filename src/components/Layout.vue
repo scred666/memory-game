@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section class="layout">
     <h1>layout {{ difficult }}</h1>
     <difficult-switcher :difficult="difficult" @updateDifficult="updateDifficult" />
     <Cards :emojis-count="difficulties[difficult]" />
@@ -27,4 +27,8 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped lang="sass">
+.layout
+  min-height: 100vh
+  background: $black
+</style>
