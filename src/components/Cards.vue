@@ -107,6 +107,7 @@ export default {
   align-items: center
   +media((max-width: (0: calc(95vw + 8px), 1200: rem(960))))
   margin: 0 auto
+  padding-bottom: rem(40)
 .win-enter-active, .win-leave-active
   transition: .5s
 .win-enter, .win-leave-to
