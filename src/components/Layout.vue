@@ -1,28 +1,37 @@
 <template>
   <section class="layout">
-    <h1>layout {{ difficult }}</h1>
     <difficult-switcher :difficult="difficult" @updateDifficult="updateDifficult" />
-    <Cards :emojis-count="difficulties[difficult]" />
+    <Cards :emojis="emojisByDifficult" :difficult="difficult" @reshuffle="reshuffle" />
   </section>
 </template>
 
 <script>
-import { difficulties } from '@/utils'
+import { difficulties, emojis, shuffleArr } from '@/utils'
 import Cards from '@/components/Cards'
 import DifficultSwitcher from '@/components/DifficultSwitcher'
 export default {
   name: 'Layout',
   data: () => ({
-    difficult: 'easy'
+    difficult: 'easy',
+    emojis: []
   }),
+  components: { DifficultSwitcher, Cards },
   methods: {
     updateDifficult(difficult) {
       this.difficult = difficult
+    },
+    reshuffle() {
+      this.emojis = shuffleArr(this.emojis)
     }
   },
-  components: { DifficultSwitcher, Cards },
+  mounted() {
+    this.emojis = shuffleArr(emojis)
+  },
   computed: {
-    difficulties: () => difficulties
+    difficulties: () => difficulties,
+    emojisByDifficult() {
+      return shuffleArr(this.emojis).slice(0, difficulties[this.difficult])
+    }
   }
 }
 </script>

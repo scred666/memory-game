@@ -1,8 +1,8 @@
 <template>
-  <div @click="handler" :class="classes">
+  <div @click="handler" :class="wrapperClasses">
     <div class="card__content">
       <div class="card__content-front"></div>
-      <div class="card__content-back">
+      <div :class="backSideClasses">
         <transition name="fading">
           <span v-if="isSolved || isClicked">
             {{ card.emoji }}
@@ -16,6 +16,11 @@
 <script>
 export default {
   props: {
+    difficult: {
+      type: String,
+      default: 'easy',
+      required: true
+    },
     card: {
       type: Object,
       default: () => ({}),
@@ -42,12 +47,15 @@ export default {
     }
   },
   computed: {
-    classes() {
+    wrapperClasses() {
       return {
         card: true,
         'card--clicked': this.isClicked,
         'card--solved': this.isSolved
       }
+    },
+    backSideClasses() {
+      return ['card__content-back', `card__content-back--${this.difficult}`]
     },
     isClicked() {
       return this.currentClickedCards.some(item => {
@@ -66,6 +74,7 @@ export default {
 
 <style scoped lang="sass">
 .card
+  margin: rem(5)
   background-color: transparent
   height: rem(80)
   width: rem(80)
@@ -87,14 +96,22 @@ export default {
       backface-visibility: hidden
       border-radius: rem(4)
     &-front
-      background: $light
+      background-color: $light
     &-back
       transform: rotateY(180deg)
-      background: $green
+      background-color: $green
       display: flex
       align-items: center
       justify-content: center
       line-height: 0
+      &--medium
+        background-color: $yellow
+      &--hard
+        background-color: $orange
+      &--expert
+        background-color: $deep-orange
+      &--survival
+        background-color: $red
   &--clicked, &--solved
     .card
       &__content

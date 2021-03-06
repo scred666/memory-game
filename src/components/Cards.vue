@@ -1,34 +1,46 @@
 <template>
-  <div class="cards">
-    <card
-      :current-clicked-cards="currentClickedCards"
-      :solved-cards="solvedCards"
-      v-for="card in emojisToGame"
-      :card="card"
-      :key="card.privateId"
-      @choseCard="choseCard"
-    />
+  <div>
+    <win-message v-if="isGamePassed" @retry="startNewGame" />
+    <div class="cards">
+      <card
+        v-bind="$attrs"
+        :current-clicked-cards="currentClickedCards"
+        :solved-cards="solvedCards"
+        v-for="card in emojisToGame"
+        :card="card"
+        :key="card.privateId"
+        @choseCard="choseCard"
+      />
+    </div>
   </div>
 </template>
 
 <script>
-import { emojis, getRandomId, shuffleArr } from '@/utils'
+import { getRandomId, shuffleArr } from '@/utils'
 import Card from '@/components/Card'
-
 export default {
   props: {
-    emojisCount: {
-      type: Number,
-      default: 10,
+    // emojisCount: {
+    //   type: Number,
+    //   default: 10,
+    //   required: true
+    // },
+    emojis: {
+      type: Array,
+      default: () => [],
       required: true
     }
   },
   name: 'Cards',
   data: () => ({
     currentClickedCards: [],
-    solvedCards: []
+    solvedCards: [],
+    isWinWindowShow: false
   }),
-  components: { Card },
+  components: {
+    WinMessage: () => import('@/components/WinMessage'),
+    Card
+  },
   watch: {
     currentClickedCards() {
       if (this.currentClickedCards.length === 2) {
@@ -42,23 +54,31 @@ export default {
           }, 500)
         }
       }
+    },
+    emojis() {
+      this.resetResults()
     }
   },
   methods: {
-    shuffleInitialEmojis() {
-      return shuffleArr(emojis)
-    },
     choseCard(item) {
       const { publicId, privateId } = item
       this.currentClickedCards.push({ publicId, privateId })
+    },
+    startNewGame() {
+      this.resetResults()
+      this.$emit('reshuffle')
+    },
+    resetResults() {
+      this.solvedCards = []
+      this.currentClickedCards = []
     }
   },
   computed: {
-    emojisByDifficult() {
-      return this.shuffleInitialEmojis().slice(0, this.emojisCount)
-    },
+    // emojisByDifficult() {
+    //   return shuffleArr(this.emojis).slice(0, this.emojisCount)
+    // },
     emojisToGame() {
-      const duplicatedEmojis = this.emojisByDifficult.flatMap(emoji => {
+      const duplicatedEmojis = this.emojis.flatMap(emoji => {
         const publicId = getRandomId()
         return [
           { publicId, emoji, privateId: getRandomId() },
@@ -66,6 +86,11 @@ export default {
         ]
       })
       return shuffleArr(duplicatedEmojis)
+    },
+    isGamePassed() {
+      return this.emojisToGame.every(emoji => {
+        return this.solvedCards.includes(emoji.publicId)
+      })
     }
   }
 }
@@ -73,7 +98,11 @@ export default {
 
 <style scoped lang="sass">
 .cards
-  display: grid
-  grid-template-columns: repeat(auto-fill, rem(80))
-  gap: rem(10)
+  display: flex
+  flex-direction: row
+  flex-wrap: wrap
+  justify-content: center
+  align-items: center
+  +media((max-width: (0: 80vw, 1200: rem(960))))
+  margin: 0 auto
 </style>
