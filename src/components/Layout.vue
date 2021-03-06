@@ -1,6 +1,10 @@
 <template>
   <section class="layout">
-    <difficult-switcher :difficult="difficult" @updateDifficult="updateDifficult" />
+    <difficult-switcher
+      :difficult="difficult"
+      @updateDifficult="updateDifficult"
+      @reshuffle="reshuffle"
+    />
     <Cards :emojis="emojisByDifficult" :difficult="difficult" @reshuffle="reshuffle" />
   </section>
 </template>

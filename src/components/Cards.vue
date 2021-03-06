@@ -1,6 +1,8 @@
 <template>
   <div>
-    <win-message v-if="isGamePassed" @retry="startNewGame" />
+    <transition name="win">
+      <win-message v-if="isGamePassed" @retry="startNewGame" />
+    </transition>
     <div class="cards">
       <card
         v-bind="$attrs"
@@ -103,6 +105,12 @@ export default {
   flex-wrap: wrap
   justify-content: center
   align-items: center
-  +media((max-width: (0: 80vw, 1200: rem(960))))
+  +media((max-width: (0: calc(95vw + 8px), 1200: rem(960))))
   margin: 0 auto
+.win-enter-active, .win-leave-active
+  transition: .5s
+.win-enter, .win-leave-to
+  -webkit-transform: scale(1.1)
+  opacity: 0
+  transform: scale(1.1)
 </style>

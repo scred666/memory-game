@@ -9,12 +9,14 @@
         @updateDifficult="updateDifficult"
       />
     </div>
+    <retry-btn @btnClicked="retry" />
   </div>
 </template>
 
 <script>
 import { difficulties } from '@/utils'
 import DifficultRadio from '@/components/controls/DifficultRadio'
+import RetryBtn from '@/components/RetryBtn'
 export default {
   props: {
     difficult: {
@@ -27,9 +29,12 @@ export default {
   methods: {
     updateDifficult(difficult) {
       this.$emit('updateDifficult', difficult)
+    },
+    retry() {
+      this.$emit('reshuffle')
     }
   },
-  components: { DifficultRadio },
+  components: { RetryBtn, DifficultRadio },
   computed: {
     difficulties: () => difficulties
   }
@@ -39,12 +44,16 @@ export default {
 <style scoped lang="sass">
 .difficult-switcher
   margin: rem(20) rem(20) rem(15)
-  +media((max-width: (0: 80vw, 1200: rem(960))))
-  display: inline-block
+  +media((max-width: (0: calc(95vw + 8px), 1200: rem(960))))
+  display: inline-flex
+  flex-wrap: wrap
+  align-items: center
+  justify-content: center
   &__items
 
     display: flex
     align-items: center
     justify-content: center
     flex-wrap: wrap
+    .retry
 </style>

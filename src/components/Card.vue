@@ -74,11 +74,11 @@ export default {
 
 <style scoped lang="sass">
 .card
-  margin: rem(5)
+  +media((margin: (0: rem(4), 768: rem(5))))
   background-color: transparent
-  height: rem(80)
-  width: rem(80)
-  font-size: rem(40)
+  +media((width: (0: rem(50), 768: rem(80))))
+  +media((height: (0: rem(50), 768: rem(80))))
+  +media((font-size: (0: rem(24), 768: rem(40))))
   perspective: rem(1000)
   cursor: pointer
   &__content
